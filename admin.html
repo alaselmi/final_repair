@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Reactive Smartphone Repair</title>
+    <link rel="stylesheet" href="first.css">
+</head>
+<body data-page="admin">
+    <header>
+        <div class="header-inner">
+            <div>
+                <h1>Admin panel</h1>
+                <p>Manage products and update the landing content from the secure admin area.</p>
+            </div>
+            <div class="header-actions">
+                <a href="admin_repairs.php" class="button-secondary">Repair desk</a>
+                <a href="main.html" class="button-secondary">Back to home</a>
+            </div>
+        </div>
+        <nav aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="main.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="store.html">Store</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="admin.html" class="active">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="admin" class="admin-panel">
+            <div id="admin-access-message" class="admin-access-message hidden">
+                <h2>Admin access required</h2>
+                <p>Only a signed-in admin can view this page. Please sign in as <strong>admin@repair.com</strong>.</p>
+            </div>
+
+            <div id="admin-controls" class="admin-grid hidden">
+                <article class="admin-card">
+                    <h2>Landing content</h2>
+                    <label for="admin-hero-title">Hero title</label>
+                    <input id="admin-hero-title" type="text" placeholder="Page headline" />
+                    <label for="admin-hero-desc">Hero description</label>
+                    <textarea id="admin-hero-desc" placeholder="Short supporting description"></textarea>
+                    <button id="update-hero" type="button" class="button full-width">Save hero content</button>
+                </article>
+
+                <article class="admin-card">
+                    <h2>Store manager</h2>
+                    <label for="admin-product-name">Product name</label>
+                    <input id="admin-product-name" type="text" placeholder="e.g. Tempered glass" />
+                    <label for="admin-product-brand">Brand</label>
+                    <input id="admin-product-brand" type="text" placeholder="e.g. ClearGuard" />
+                    <label for="admin-product-category">Category</label>
+                    <input id="admin-product-category" type="text" placeholder="e.g. Accessories" />
+                    <label for="admin-product-price">Price</label>
+                    <input id="admin-product-price" type="number" step="0.01" min="0" placeholder="19.99" />
+                    <label for="admin-product-image">Image path</label>
+                    <input id="admin-product-image" type="text" placeholder="images/glass-protector.svg" />
+                    <label for="admin-product-desc">Description</label>
+                    <textarea id="admin-product-desc" placeholder="Product details and benefits"></textarea>
+                    <button id="add-product" type="button" class="button full-width">Add product</button>
+                    <div class="admin-store-list" id="admin-store-list"></div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="main.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="store.html">Store</a>
+            <a href="account.html">Account</a>
+            <a href="admin.html">Admin</a>
+        </div>
+        <p>Reactive Smartphone Repair · Admin content and store management.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

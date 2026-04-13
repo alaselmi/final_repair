@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reactive Smartphone Repair</title>
+    <link rel="stylesheet" href="first.css">
+</head>
+<body data-page="main">
+    <header>
+        <div class="header-inner">
+            <div>
+                <h1>Reactive Smartphone Repair</h1>
+                <p>Fast, reliable service for cracked screens, dead batteries, water damage, and software recovery.</p>
+            </div>
+            <a href="account.html" class="header-action button-secondary">My Account</a>
+        </div>
+        <nav aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="main.html" class="active">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="store.html">Store</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <p id="hero-description">On-demand smartphone repair that feels like a digital assistant helping every step of the way.</p>
+                <h2 id="hero-title">Get your phone fixed faster with guided repair and proactive support.</h2>
+                <div class="hero-actions">
+                    <a href="submit_repair.php" class="button">Book a Repair</a>
+                    <a href="services.html" class="button-secondary">View Services</a>
+                </div>
+            </div>
+            <div class="assistant-panel" id="assistant">
+                <div class="assistant-card">
+                    <div class="assistant-status">
+                        <span class="status-dot"></span>
+                        <span>SmartAssist online</span>
+                    </div>
+                    <div class="assistant-message">
+                        <div class="chat-bubble">
+                            <strong>Hello!</strong>
+                            <p>Tell me what your phone is doing, and I’ll suggest the fastest repair service.</p>
+                        </div>
+                        <form id="issue-form">
+                            <label for="issue">Your issue</label>
+                            <input id="issue" type="text" placeholder="e.g. cracked screen, battery dies quickly" />
+                            <button type="submit" class="button full-width">Get Recommendation</button>
+                        </form>
+                        <div class="chat-bubble" id="assistant-response">Select one of the service options or describe the issue for a smart recommendation.</div>
+                    </div>
+                </div>
+                <div class="actions-grid">
+                    <div class="insight-card">
+                        <h4>Fast diagnosis</h4>
+                        <p>Instant guidance helps you choose the right repair path before you book.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h4>Easy booking</h4>
+                        <p>Reserve a repair slot quickly from your account page and skip the wait.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-title">
+            <h2>Start with service, shop, or account</h2>
+        </section>
+        <div class="actions-grid">
+            <article class="feature-card">
+                <h3>Repair services</h3>
+                <p>See our full service catalog and find the repair your device needs.</p>
+                <a href="services.html" class="button-secondary">Explore Services</a>
+            </article>
+            <article class="feature-card">
+                <h3>Accessory store</h3>
+                <p>Shop screen protectors, chargers, cables, and accessories designed for repairs.</p>
+                <a href="store.html" class="button-secondary">Open Store</a>
+            </article>
+            <article class="feature-card">
+                <h3>Repair dashboard</h3>
+                <p>Sign in to submit a repair, track ongoing requests, and review completed jobs.</p>
+                <a href="my_repairs.php" class="button-secondary">View my repairs</a>
+            </article>
+        </div>
+
+        <section class="section-title">
+            <h2>Your repair progress</h2>
+            <p id="main-repair-summary-intro">Sign in to see active repair requests and track completion status.</p>
+        </section>
+        <div class="services-grid" id="main-repair-summary">
+            <article class="feature-card">
+                <p>Repair summaries appear here after you sign in.</p>
+            </article>
+        </div>
+
+        <section class="features-grid">
+            <article class="feature-card">
+                <h3>Smart guidance</h3>
+                <p>Real-time recommendations help you choose the right repair without guessing.</p>
+            </article>
+            <article class="feature-card">
+                <h3>Clear timelines</h3>
+                <p>Know exactly how long repairs take and how soon your phone can be back in action.</p>
+            </article>
+            <article class="feature-card">
+                <h3>Device-friendly care</h3>
+                <p>We handle fragile components and use quality parts to maximize device lifespan.</p>
+            </article>
+            <article class="feature-card">
+                <h3>Fast support</h3>
+                <p>Book and troubleshoot without waiting by using the account and assistant tools.</p>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="main.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="store.html">Store</a>
+            <a href="account.html">Account</a>
+            <a href="admin.html">Admin</a>
+        </div>
+        <p>Reactive Smartphone Repair · Designed for quick recovery and easy booking.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+ 

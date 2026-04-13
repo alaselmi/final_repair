@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+  <defs>
+    <linearGradient id="glow" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#c7d2fe"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" rx="40" fill="#fff" stroke="#c7d2fe" stroke-width="8"/>
+  <rect x="70" y="50" width="340" height="260" rx="26" fill="url(#glow)"/>
+  <rect x="120" y="90" width="240" height="180" rx="20" fill="#fff"/>
+  <text x="240" y="220" text-anchor="middle" fill="#3b82f6" font-size="40" font-family="Inter, sans-serif">GLASS</text>
+  <text x="240" y="260" text-anchor="middle" fill="#475569" font-size="20" font-family="Inter, sans-serif">Protector</text>
+</svg>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Space | Reactive Smartphone Repair</title>
+    <link rel="stylesheet" href="first.css">
+</head>
+<body data-page="client">
+    <header>
+        <div class="header-inner">
+            <div>
+                <h1>Client repair space</h1>
+                <p>Track your devices in repair, view estimated completion time, and review pricing details.</p>
+            </div>
+            <a href="account.html" class="header-action button-secondary">Back to account</a>
+        </div>
+        <nav aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="main.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="store.html">Store</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="client.html" class="active">Repair space</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="section-title">
+            <h2>My repair orders</h2>
+            <p>See all active and recent repair jobs with price estimates, service duration, and status updates.</p>
+        </section>
+
+        <div class="repair-summary-panel">
+            <div class="repair-summary-card">
+                <h3>Active repairs</h3>
+                <p id="client-summary-active">0 active repairs</p>
+            </div>
+        </div>
+
+        <section class="repair-list" id="client-bookings">
+            <p class="empty-state">Sign in on the account page to view your repair devices and status.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="main.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="store.html">Store</a>
+            <a href="account.html">Account</a>
+            <a href="admin.html">Admin</a>
+        </div>
+        <p>Reactive Smartphone Repair · Your personalized repair tracker.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account | Reactive Smartphone Repair</title>
+    <link rel="stylesheet" href="first.css">
+</head>
+<body data-page="account">
+    <header>
+        <div class="header-inner">
+            <div>
+                <h1>Customer account</h1>
+                <p>Sign in to track repair status, manage bookings, and view your service history.</p>
+            </div>
+            <a href="store.html" class="header-action button-secondary">Shop accessories</a>
+        </div>
+        <nav aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="main.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="store.html">Store</a></li>
+                <li><a href="account.html" class="active">Account</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="account-grid">
+            <article class="account-card" id="account-auth-card">
+                <h2>Sign in or create an account</h2>
+                <div class="auth-tabs" role="tablist">
+                    <button type="button" class="auth-tab active" data-panel="login-panel" role="tab" aria-selected="true">Login</button>
+                    <button type="button" class="auth-tab" data-panel="signup-panel" role="tab" aria-selected="false">Sign up</button>
+                </div>
+
+                <div id="login-panel" class="auth-panel" role="tabpanel">
+                    <label for="login-email">Email</label>
+                    <input id="login-email" type="email" placeholder="you@example.com" />
+                    <label for="login-password">Password</label>
+                    <input id="login-password" type="password" placeholder="Password" />
+                    <button id="login-button" type="button" class="button full-width">Login</button>
+                </div>
+
+                <div id="signup-panel" class="auth-panel hidden" role="tabpanel">
+                    <label for="signup-name">Name</label>
+                    <input id="signup-name" type="text" placeholder="Your name" />
+                    <label for="signup-email">Email</label>
+                    <input id="signup-email" type="email" placeholder="you@example.com" />
+                    <label for="signup-password">Password</label>
+                    <input id="signup-password" type="password" placeholder="Choose a password" />
+                    <button id="signup-button" type="button" class="button full-width">Create account</button>
+                </div>
+
+                <p class="account-note">Once you’re signed in, use the dashboard to book repairs and follow status updates.</p>
+            </article>
+
+            <article class="account-card hidden" id="account-dashboard">
+                <div class="account-header">
+                    <div>
+                        <h2 id="dashboard-greeting">Welcome back!</h2>
+                        <p id="dashboard-email"></p>
+                    </div>
+                    <div class="account-actions">
+                        <a href="my_repairs.php" class="button-secondary">View my repairs</a>
+                        <button id="logout-button" type="button" class="button-secondary">Logout</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-status-card">
+                    <h3>Repair status</h3>
+                    <p id="dashboard-status-message">No bookings yet. Schedule a repair to start tracking.</p>
+                </div>
+
+                <div class="booking-panel">
+                    <h3>Book a repair</h3>
+                    <label for="account-model">Phone model</label>
+                    <input id="account-model" type="text" placeholder="iPhone 14, Galaxy S24, Pixel 8" />
+                    <label for="account-service">Repair service</label>
+                    <select id="account-service">
+                        <option>Screen Repair</option>
+                        <option>Battery Replacement</option>
+                        <option>Water Damage</option>
+                        <option>Camera Fix</option>
+                        <option>Software Support</option>
+                    </select>
+                    <label for="account-date">Preferred date</label>
+                    <input id="account-date" type="date" />
+                    <button id="account-book-button" type="button" class="button full-width">Book repair</button>
+                </div>
+
+                <div class="booking-list-panel">
+                    <h3>Your bookings</h3>
+                    <div id="account-bookings" class="booking-list"></div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="main.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="store.html">Store</a>
+            <a href="account.html">Account</a>
+            <a href="admin.html">Admin</a>
+        </div>
+        <p>Reactive Smartphone Repair · Personal repair history and booking control.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
