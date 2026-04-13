@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop | Reactive Smartphone Repair</title>
+    <title>Store retired | Reactive Smartphone Repair</title>
     <link rel="stylesheet" href="first.css">
 </head>
 <body data-page="store">
     <header>
         <div class="header-inner">
             <div>
-                <h1>Accessory shop</h1>
-                <p>Browse repairs-ready accessories with brand, category, and price filters.</p>
+                <h1>Store retired</h1>
+                <p>We’ve retired the accessory shop to focus on repair bookings and service tracking.</p>
             </div>
-            <a href="account.html" class="header-action button-secondary">My Account</a>
+            <a href="main.html" class="header-action button-secondary">Return home</a>
         </div>
         <nav aria-label="Primary navigation">
             <ul class="nav-list">
                 <li><a href="main.html">Home</a></li>
                 <li><a href="services.html">Services</a></li>
-                <li><a href="store.html" class="active">Store</a></li>
                 <li><a href="account.html">Account</a></li>
                 <li><a href="admin.html">Admin</a></li>
             </ul>
@@ -27,66 +26,13 @@
     </header>
 
     <main>
-        <section class="page-intro">
-            <h2>Shop filters</h2>
-            <p>Use the filters below to find phone accessories by brand, category, or budget.</p>
-        </section>
-
-        <section class="filters-grid">
-            <div class="filter-card">
-                <label for="store-brand-filter">Brand</label>
-                <select id="store-brand-filter">
-                    <option value="all">All brands</option>
-                </select>
+        <section class="summary-panel">
+            <h2>Repair services only</h2>
+            <p>Our accessory shop has been retired. The site now focuses fully on repair request booking, status tracking, and technician service updates.</p>
+            <div class="actions-grid">
+                <a href="services.html" class="button">View services</a>
+                <a href="account.html" class="button-secondary">My account</a>
             </div>
-            <div class="filter-card">
-                <label for="store-category-filter">Category</label>
-                <select id="store-category-filter">
-                    <option value="all">All categories</option>
-                </select>
-            </div>
-            <div class="filter-card">
-                <label for="store-price-min">Min price</label>
-                <input id="store-price-min" type="number" step="0.01" min="0" placeholder="0" />
-            </div>
-            <div class="filter-card">
-                <label for="store-price-max">Max price</label>
-                <input id="store-price-max" type="number" step="0.01" min="0" placeholder="100" />
-            </div>
-            <div class="filter-card full-width">
-                <label for="store-search">Search products</label>
-                <input id="store-search" type="search" placeholder="Search by name or brand" />
-            </div>
-            <div class="filter-card full-width">
-                <label for="store-sort">Sort by</label>
-                <select id="store-sort">
-                    <option value="popular">Most popular</option>
-                    <option value="low">Price: low to high</option>
-                    <option value="high">Price: high to low</option>
-                    <option value="brand">Brand</option>
-                </select>
-            </div>
-            <div class="filter-card full-width filter-actions">
-                <button id="reset-filters" type="button" class="button-secondary">Reset filters</button>
-            </div>
-        </section>
-
-        <section class="store-layout">
-            <div class="store-grid" id="store-grid"></div>
-            <aside class="cart-summary-panel">
-                <div class="cart-summary-card">
-                    <h3>Cart summary</h3>
-                    <p id="cart-count-summary">0 items</p>
-                    <div class="cart-total-wrap">
-                        <span>Total</span>
-                        <strong id="cart-total">$0.00</strong>
-                    </div>
-                    <button id="checkout-button" class="button full-width" type="button" disabled>Checkout</button>
-                </div>
-                <div class="cart-items" id="cart-items">
-                    <p class="cart-empty">Your cart is empty. Add an accessory to begin.</p>
-                </div>
-            </aside>
         </section>
     </main>
 
@@ -94,7 +40,6 @@
         <div class="footer-links">
             <a href="main.html">Home</a>
             <a href="services.html">Services</a>
-            <a href="store.html">Store</a>
             <a href="account.html">Account</a>
             <a href="admin.html">Admin</a>
         </div>

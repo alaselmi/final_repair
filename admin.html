@@ -11,7 +11,7 @@
         <div class="header-inner">
             <div>
                 <h1>Admin panel</h1>
-                <p>Manage products and update the landing content from the secure admin area.</p>
+                <p>Update landing content and access repair workflow controls from the secure admin area.</p>
             </div>
             <div class="header-actions">
                 <a href="admin_repairs.php" class="button-secondary">Repair desk</a>
@@ -22,7 +22,6 @@
             <ul class="nav-list">
                 <li><a href="main.html">Home</a></li>
                 <li><a href="services.html">Services</a></li>
-                <li><a href="store.html">Store</a></li>
                 <li><a href="account.html">Account</a></li>
                 <li><a href="admin.html" class="active">Admin</a></li>
             </ul>
@@ -47,21 +46,9 @@
                 </article>
 
                 <article class="admin-card">
-                    <h2>Store manager</h2>
-                    <label for="admin-product-name">Product name</label>
-                    <input id="admin-product-name" type="text" placeholder="e.g. Tempered glass" />
-                    <label for="admin-product-brand">Brand</label>
-                    <input id="admin-product-brand" type="text" placeholder="e.g. ClearGuard" />
-                    <label for="admin-product-category">Category</label>
-                    <input id="admin-product-category" type="text" placeholder="e.g. Accessories" />
-                    <label for="admin-product-price">Price</label>
-                    <input id="admin-product-price" type="number" step="0.01" min="0" placeholder="19.99" />
-                    <label for="admin-product-image">Image path</label>
-                    <input id="admin-product-image" type="text" placeholder="images/glass-protector.svg" />
-                    <label for="admin-product-desc">Description</label>
-                    <textarea id="admin-product-desc" placeholder="Product details and benefits"></textarea>
-                    <button id="add-product" type="button" class="button full-width">Add product</button>
-                    <div class="admin-store-list" id="admin-store-list"></div>
+                    <h2>Repair queue preview</h2>
+                    <p>Use the Repair Desk to review incoming requests, update statuses, and add technician notes.</p>
+                    <p class="small-text">This admin page controls homepage content only. Open the Repair Desk to manage live repair requests.</p>
                 </article>
             </div>
         </section>
@@ -71,11 +58,10 @@
         <div class="footer-links">
             <a href="main.html">Home</a>
             <a href="services.html">Services</a>
-            <a href="store.html">Store</a>
             <a href="account.html">Account</a>
             <a href="admin.html">Admin</a>
         </div>
-        <p>Reactive Smartphone Repair · Admin content and store management.</p>
+        <p>Reactive Smartphone Repair · Admin content and repair workflow management.</p>
     </footer>
 
     <script src="script.js"></script>

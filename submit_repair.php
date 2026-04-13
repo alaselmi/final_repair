@@ -78,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul class="nav-list">
                 <li><a href="main.html">Home</a></li>
                 <li><a href="services.html">Services</a></li>
-                <li><a href="store.html">Store</a></li>
                 <li><a href="account.html">Account</a></li>
                 <li><a href="admin.html">Admin</a></li>
             </ul>
@@ -134,7 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="footer-links">
             <a href="main.html">Home</a>
             <a href="services.html">Services</a>
-            <a href="store.html">Store</a>
             <a href="account.html">Account</a>
             <a href="admin.html">Admin</a>
         </div>

@@ -13,13 +13,12 @@
                 <h1>Customer account</h1>
                 <p>Sign in to track repair status, manage bookings, and view your service history.</p>
             </div>
-            <a href="store.html" class="header-action button-secondary">Shop accessories</a>
+            <a href="submit_repair.php" class="header-action button-secondary">Book repair</a>
         </div>
         <nav aria-label="Primary navigation">
             <ul class="nav-list">
                 <li><a href="main.html">Home</a></li>
                 <li><a href="services.html">Services</a></li>
-                <li><a href="store.html">Store</a></li>
                 <li><a href="account.html" class="active">Account</a></li>
                 <li><a href="admin.html">Admin</a></li>
             </ul>
@@ -73,6 +72,11 @@
                     <p id="dashboard-status-message">No bookings yet. Schedule a repair to start tracking.</p>
                 </div>
 
+                <div class="dashboard-status-card" id="account-repair-summary">
+                    <h3>Repair requests</h3>
+                    <p id="account-repair-summary-intro">Your active repairs and recent history appear here once you sign in.</p>
+                </div>
+
                 <div class="booking-panel">
                     <h3>Book a repair</h3>
                     <label for="account-model">Phone model</label>
@@ -102,7 +106,6 @@
         <div class="footer-links">
             <a href="main.html">Home</a>
             <a href="services.html">Services</a>
-            <a href="store.html">Store</a>
             <a href="account.html">Account</a>
             <a href="admin.html">Admin</a>
         </div>

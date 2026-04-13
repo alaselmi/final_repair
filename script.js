@@ -1,8 +1,6 @@
 const storageKeys = {
     users: 'repairUsers',
     currentUser: 'repairCurrentUser',
-    cart: 'repairCart',
-    products: 'repairProducts',
     heroSettings: 'repairHeroSettings',
 };
 
@@ -73,22 +71,6 @@ const summaryDetails = document.getElementById('summary-details');
 const assistantResponse = document.getElementById('assistant-response');
 const userIssueInput = document.getElementById('issue');
 const issueForm = document.getElementById('issue-form');
-const storeGrid = document.getElementById('store-grid');
-const filterBrand = document.getElementById('store-brand-filter');
-const filterCategory = document.getElementById('store-category-filter');
-const filterPriceMin = document.getElementById('store-price-min');
-const filterPriceMax = document.getElementById('store-price-max');
-const filterSearch = document.getElementById('store-search');
-const filterSort = document.getElementById('store-sort');
-const resetFiltersButton = document.getElementById('reset-filters');
-const adminProductName = document.getElementById('admin-product-name');
-const adminProductBrand = document.getElementById('admin-product-brand');
-const adminProductCategory = document.getElementById('admin-product-category');
-const adminProductPrice = document.getElementById('admin-product-price');
-const adminProductImage = document.getElementById('admin-product-image');
-const adminProductDesc = document.getElementById('admin-product-desc');
-const addProductButton = document.getElementById('add-product');
-const adminStoreList = document.getElementById('admin-store-list');
 const adminHeroTitle = document.getElementById('admin-hero-title');
 const adminHeroDesc = document.getElementById('admin-hero-desc');
 const heroTitle = document.getElementById('hero-title');
@@ -111,6 +93,8 @@ const accountService = document.getElementById('account-service');
 const accountDate = document.getElementById('account-date');
 const accountBookButton = document.getElementById('account-book-button');
 const accountBookings = document.getElementById('account-bookings');
+const accountRepairSummary = document.getElementById('account-repair-summary');
+const accountRepairSummaryIntro = document.getElementById('account-repair-summary-intro');
 const clientBookingsList = document.getElementById('client-bookings');
 const clientSummaryActive = document.getElementById('client-summary-active');
 const accountAuthCard = document.getElementById('account-auth-card');
@@ -121,11 +105,6 @@ const adminAccessMessage = document.getElementById('admin-access-message');
 const adminControls = document.getElementById('admin-controls');
 const bookingForm = document.getElementById('booking-form');
 const bookingDate = document.getElementById('booking-date');
-const cartItems = document.getElementById('cart-items');
-const cartCount = document.getElementById('cart-count');
-const cartCountSummary = document.getElementById('cart-count-summary');
-const cartTotal = document.getElementById('cart-total');
-const checkoutButton = document.getElementById('checkout-button');
 const repairFeedback = document.getElementById('repair-feedback');
 const repairList = document.getElementById('repair-list');
 const statsTotal = document.getElementById('stats-total');
@@ -137,7 +116,6 @@ const mainRepairSummary = document.getElementById('main-repair-summary');
 
 let users = [];
 let currentUser = null;
-let cart = [];
 
 const serviceInfo = {
     'Screen Repair': 'We replace cracked or unresponsive screens with premium glass. Typical turnaround: 1-2 business days.',
@@ -154,43 +132,6 @@ const serviceEstimates = {
     'Camera Fix': { price: '$119.00', duration: '2-4 days' },
     'Software Support': { price: '$69.00', duration: 'same day' },
 };
-
-const defaultProducts = [
-    {
-        name: 'Tempered Glass Screen Protector',
-        brand: 'ClearGuard',
-        category: 'Accessories',
-        price: '$19.99',
-        image: 'images/tempered-glass.svg',
-        description: 'Ultra-clear protection that keeps your screen scratch-free without losing touch sensitivity.',
-    },
-    {
-        name: 'Fast Wireless Charger',
-        brand: 'VoltWave',
-        category: 'Chargers',
-        price: '$29.99',
-        image: 'images/wireless-charger.svg',
-        description: 'Compact wireless charging pad for fast top-up sessions at home or on the desk.',
-    },
-    {
-        name: 'Phone Grip & Stand',
-        brand: 'GripMate',
-        category: 'Cases',
-        price: '$14.99',
-        image: 'images/phone-grip.svg',
-        description: 'Slim grip accessory for easier handling and hands-free media viewing.',
-    },
-    {
-        name: 'USB-C Power Cable',
-        brand: 'ChargePro',
-        category: 'Cables',
-        price: '$9.99',
-        image: 'images/usb-c-cable.svg',
-        description: 'Durable braided charging cable for fast charge and data transfer.',
-    },
-];
-
-let products = [];
 
 let heroSettings = {
     title: '',
@@ -257,57 +198,6 @@ function saveCurrentUser() {
     }
 }
 
-async function loadCart() {
-    if (!useServer) {
-        try {
-            const storedCart = window.localStorage.getItem(storageKeys.cart);
-            cart = storedCart ? JSON.parse(storedCart) : [];
-            cart = cart.map(item => ({ ...item, quantity: item.quantity || 1 }));
-        } catch (error) {
-            cart = [];
-        }
-        return;
-    }
-
-    try {
-        cart = await sendApiRequest('cart.php');
-        cart = cart.map(item => ({ ...item, quantity: item.quantity || 1 }));
-    } catch (error) {
-        cart = [];
-    }
-}
-
-function saveCart() {
-    if (useServer) {
-        return;
-    }
-    window.localStorage.setItem(storageKeys.cart, JSON.stringify(cart));
-}
-
-async function loadProducts() {
-    if (!useServer) {
-        try {
-            const stored = window.localStorage.getItem(storageKeys.products);
-            products = stored ? JSON.parse(stored) : defaultProducts.slice();
-        } catch (error) {
-            products = defaultProducts.slice();
-        }
-        return;
-    }
-
-    try {
-        products = await sendApiRequest('products.php');
-    } catch (error) {
-        products = defaultProducts.slice();
-    }
-}
-
-function saveProducts() {
-    if (useServer) {
-        return;
-    }
-    window.localStorage.setItem(storageKeys.products, JSON.stringify(products));
-}
 
 async function loadHeroSettings() {
     if (!useServer) {
@@ -397,6 +287,53 @@ function renderAccountState() {
         if (dashboardEmail) dashboardEmail.textContent = currentUser.email;
         renderBookings();
         renderClientBookings();
+        if (page === 'account') {
+            loadAccountRepairSummary();
+        }
+    }
+}
+
+async function loadAccountRepairSummary() {
+    if (!accountRepairSummary) return;
+    if (!currentUser) {
+        accountRepairSummary.innerHTML = '<p>Sign in to manage and track your repair requests.</p>';
+        if (accountRepairSummaryIntro) accountRepairSummaryIntro.textContent = 'Repair status updates appear here after you sign in.';
+        return;
+    }
+
+    if (!useServer) {
+        accountRepairSummary.innerHTML = '<p>Repair tracking is available when connected to the server.</p>';
+        if (accountRepairSummaryIntro) accountRepairSummaryIntro.textContent = 'Repair request details require server mode.';
+        return;
+    }
+
+    try {
+        const repairs = await sendApiRequest('repair_requests.php');
+        const active = repairs.filter(r => r.status !== 'Completed');
+        const completed = repairs.filter(r => r.status === 'Completed');
+
+        if (accountRepairSummaryIntro) {
+            accountRepairSummaryIntro.textContent = active.length
+                ? `You have ${active.length} active request${active.length === 1 ? '' : 's'}.`
+                : 'No active requests at the moment. View completed repairs or submit a new request.';
+        }
+
+        accountRepairSummary.innerHTML = active.length
+            ? active.slice(0, 2).map(repair => `
+                <div class="summary-panel">
+                    <p><strong>${escapeHtml(repair.device_type)} ${escapeHtml(repair.brand)}</strong></p>
+                    <p>Status: ${escapeHtml(repair.status)}</p>
+                    <p>${escapeHtml(repair.problem_description)}</p>
+                </div>
+            `).join('')
+            : '<div class="summary-panel"><p>No active repair requests found.</p><a href="submit_repair.php" class="button-secondary">Submit a repair</a></div>';
+
+        if (completed.length && repairs.length > 2) {
+            accountRepairSummary.innerHTML += '<div class="summary-panel"><p>See your full repair history in the dashboard.</p><a href="my_repairs.php" class="button-secondary">View all repairs</a></div>';
+        }
+    } catch (error) {
+        accountRepairSummary.innerHTML = `<p>${escapeHtml(error.message)}</p>`;
+        if (accountRepairSummaryIntro) accountRepairSummaryIntro.textContent = 'Unable to load repair details right now.';
     }
 }
 
@@ -847,283 +784,6 @@ if (!useServer) {
     }, 60000);
 }
 
-function getActiveFilters() {
-    if (!storeGrid) return products.slice();
-
-    const brand = filterBrand?.value || 'all';
-    const category = filterCategory?.value || 'all';
-    const minPrice = parseFloat(filterPriceMin?.value) || 0;
-    const maxPrice = parseFloat(filterPriceMax?.value) || Infinity;
-    const search = filterSearch?.value.trim().toLowerCase() || '';
-    const sortBy = filterSort?.value || 'popular';
-
-    return applyProductSort(products.filter(product => {
-        if (brand !== 'all' && product.brand !== brand) return false;
-        if (category !== 'all' && product.category !== category) return false;
-        const price = parsePrice(product.price);
-        if (price < minPrice || price > maxPrice) return false;
-        if (search.length > 0) {
-            const haystack = `${product.name} ${product.brand} ${product.category}`.toLowerCase();
-            if (!haystack.includes(search)) return false;
-        }
-        return true;
-    }), sortBy);
-}
-
-function applyProductSort(items, sortBy) {
-    return items.slice().sort((a, b) => {
-        const priceA = parsePrice(a.price);
-        const priceB = parsePrice(b.price);
-
-        switch (sortBy) {
-            case 'low':
-                return priceA - priceB;
-            case 'high':
-                return priceB - priceA;
-            case 'brand':
-                return a.brand.localeCompare(b.brand);
-            default:
-                return a.name.localeCompare(b.name);
-        }
-    });
-}
-
-function populateFilterOptions() {
-    if (!filterBrand || !filterCategory) return;
-
-    const selectedBrand = filterBrand.value;
-    const selectedCategory = filterCategory.value;
-    const brands = Array.from(new Set(products.map(product => product.brand))).sort();
-    const categories = Array.from(new Set(products.map(product => product.category))).sort();
-
-    filterBrand.innerHTML = '<option value="all">All brands</option>' + brands.map(brand => `<option value="${brand}">${brand}</option>`).join('');
-    filterCategory.innerHTML = '<option value="all">All categories</option>' + categories.map(category => `<option value="${category}">${category}</option>`).join('');
-    filterBrand.value = brands.includes(selectedBrand) ? selectedBrand : 'all';
-    filterCategory.value = categories.includes(selectedCategory) ? selectedCategory : 'all';
-}
-
-function renderStore() {
-    if (!storeGrid) return;
-
-    const filteredProducts = getActiveFilters();
-    if (!filteredProducts.length) {
-        storeGrid.innerHTML = '<div class="empty-state">No products match those filters. Try widening your search.</div>';
-        return;
-    }
-
-    storeGrid.innerHTML = filteredProducts.map(product => {
-        const originalIndex = products.indexOf(product);
-        const displayPrice = String(product.price).startsWith('$') ? product.price : `$${product.price}`;
-        return `
-            <article class="product-card">
-                ${product.image ? `<img src="${product.image}" alt="${product.name}" />` : ''}
-                <div>
-                    <strong>${product.brand}</strong>
-                    <h3>${product.name}</h3>
-                    <p>${product.description}</p>
-                </div>
-                <div class="product-footer">
-                    <span class="product-meta">${product.category}</span>
-                    <span class="product-price">${displayPrice}</span>
-                    <button type="button" data-index="${originalIndex}">Add to cart</button>
-                </div>
-            </article>
-        `;
-    }).join('');
-
-    storeGrid.querySelectorAll('button[data-index]').forEach(button => {
-        button.addEventListener('click', () => addToCart(Number(button.dataset.index)));
-    });
-}
-
-function setupStoreFilters() {
-    if (!filterBrand || !filterCategory) return;
-    populateFilterOptions();
-
-    const inputs = [filterBrand, filterCategory, filterPriceMin, filterPriceMax, filterSearch, filterSort].filter(Boolean);
-    inputs.forEach(input => {
-        input.addEventListener('change', renderStore);
-        input.addEventListener('input', renderStore);
-    });
-
-    if (resetFiltersButton) {
-        resetFiltersButton.addEventListener('click', () => {
-            if (filterBrand) filterBrand.value = 'all';
-            if (filterCategory) filterCategory.value = 'all';
-            if (filterPriceMin) filterPriceMin.value = '';
-            if (filterPriceMax) filterPriceMax.value = '';
-            if (filterSearch) filterSearch.value = '';
-            if (filterSort) filterSort.value = 'popular';
-            renderStore();
-        });
-    }
-}
-
-function parsePrice(value) {
-    return Number(value.replace(/[^0-9.]/g, '')) || 0;
-}
-
-async function addToCart(productIndex) {
-    const product = products[productIndex];
-    if (!product) return;
-
-    if (useServer) {
-        try {
-            await sendApiRequest('cart.php', 'POST', { productId: product.id, quantity: 1 });
-            await loadCart();
-            renderCart();
-            return;
-        } catch (error) {
-            alert(error.message);
-            return;
-        }
-    }
-
-    const existingItem = cart.find(item => item.name === product.name && item.price === product.price);
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-    saveCart();
-    renderCart();
-}
-
-async function removeCartItem(identifier) {
-    if (useServer) {
-        const itemId = Number(identifier);
-        if (!itemId) return;
-
-        try {
-            await sendApiRequest(`cart.php?id=${itemId}`, 'DELETE');
-            await loadCart();
-            renderCart();
-            return;
-        } catch (error) {
-            alert(error.message);
-            return;
-        }
-    }
-
-    cart.splice(Number(identifier), 1);
-    saveCart();
-    renderCart();
-}
-
-function renderCart() {
-    const total = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.quantity, 0);
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-    if (cart.length === 0) {
-        if (cartItems) {
-            cartItems.innerHTML = '<p class="cart-empty">Your cart is empty. Add accessories to see them here.</p>';
-        }
-        if (cartCount) cartCount.textContent = '0';
-        if (cartCountSummary) cartCountSummary.textContent = '0 items';
-        if (cartTotal) cartTotal.textContent = '$0.00';
-        if (checkoutButton) {
-            checkoutButton.disabled = true;
-            checkoutButton.textContent = 'Checkout';
-        }
-        return;
-    }
-
-    if (cartItems) {
-        cartItems.innerHTML = cart.map((product, index) => {
-            const removeId = product.id ? `data-remove-id="${product.id}"` : `data-remove="${index}"`;
-            return `
-                <article class="cart-item">
-                    <h4>${product.name}</h4>
-                    <p>${product.description}</p>
-                    <p>Qty: ${product.quantity}</p>
-                    <div class="cart-item-footer">
-                        <span class="product-price">${product.price}</span>
-                        <button type="button" ${removeId}>Remove</button>
-                    </div>
-                </article>
-            `;
-        }).join('');
-
-        cartItems.querySelectorAll('button[data-remove], button[data-remove-id]').forEach(button => {
-            button.addEventListener('click', () => removeCartItem(button.dataset.removeId || button.dataset.remove));
-        });
-    }
-
-    if (cartCount) cartCount.textContent = String(count);
-    if (cartCountSummary) cartCountSummary.textContent = `${count} item${count === 1 ? '' : 's'}`;
-    if (cartTotal) cartTotal.textContent = `$${total.toFixed(2)}`;
-    if (checkoutButton) {
-        checkoutButton.disabled = false;
-        checkoutButton.textContent = `Checkout ($${total.toFixed(2)})`;
-    }
-}
-
-async function checkoutCart() {
-    if (!cart.length) {
-        alert('Your cart is empty. Add items before checkout.');
-        return;
-    }
-
-    if (useServer) {
-        try {
-            await sendApiRequest('cart.php?clear=1', 'DELETE');
-        } catch (error) {
-            alert(error.message);
-            return;
-        }
-    }
-
-    alert(`Checkout complete. Total paid: ${cartTotal.textContent}`);
-    cart.length = 0;
-    if (!useServer) {
-        saveCart();
-    }
-    renderCart();
-}
-
-function renderAdminStoreList() {
-    if (!adminStoreList) return;
-    if (!isAdmin()) {
-        adminStoreList.innerHTML = '';
-        return;
-    }
-
-    adminStoreList.innerHTML = products.map((product, index) => {
-        return `
-            <div class="admin-store-item">
-                <div>
-                    <strong>${product.name}</strong>
-                    <div>${product.brand} · ${product.category} · ${product.price}</div>
-                </div>
-                <button type="button" data-delete="${product.id || index}">Remove</button>
-            </div>
-        `;
-    }).join('');
-
-    adminStoreList.querySelectorAll('button[data-delete]').forEach(button => {
-        button.addEventListener('click', async () => {
-            const id = button.dataset.delete;
-            if (useServer && id) {
-                try {
-                    await sendApiRequest(`products.php?id=${encodeURIComponent(id)}`, 'DELETE');
-                    await loadProducts();
-                    renderStore();
-                    renderAdminStoreList();
-                    return;
-                } catch (error) {
-                    alert(error.message);
-                    return;
-                }
-            }
-
-            products.splice(Number(id), 1);
-            saveProducts();
-            renderStore();
-            renderAdminStoreList();
-        });
-    });
-}
-
 function updateSummary(service) {
     if (summaryService) summaryService.textContent = service;
     if (summaryDetails) summaryDetails.textContent = serviceInfo[service] || 'Select a service to see details and estimated response time.';
@@ -1173,57 +833,6 @@ if (issueForm) {
     });
 }
 
-async function addProduct() {
-    if (!isAdmin()) {
-        alert('Admin access required.');
-        return;
-    }
-
-    const name = adminProductName?.value.trim();
-    const brand = adminProductBrand?.value.trim() || 'Brand';
-    const category = adminProductCategory?.value.trim() || 'Accessories';
-    const price = adminProductPrice?.value.trim() || '$0.00';
-    const image = adminProductImage?.value.trim() || '';
-    const description = adminProductDesc?.value.trim();
-
-    if (!name || !description) {
-        alert('Please enter a product name and description before adding.');
-        return;
-    }
-
-    if (useServer) {
-        try {
-            await sendApiRequest('products.php', 'POST', { name, brand, category, price, image, description });
-            if (adminProductName) adminProductName.value = '';
-            if (adminProductBrand) adminProductBrand.value = '';
-            if (adminProductCategory) adminProductCategory.value = '';
-            if (adminProductPrice) adminProductPrice.value = '';
-            if (adminProductImage) adminProductImage.value = '';
-            if (adminProductDesc) adminProductDesc.value = '';
-            await loadProducts();
-            populateFilterOptions();
-            renderStore();
-            renderAdminStoreList();
-            return;
-        } catch (error) {
-            alert(error.message);
-            return;
-        }
-    }
-
-    products.push({ name, brand, category, price, image, description });
-    saveProducts();
-    if (adminProductName) adminProductName.value = '';
-    if (adminProductBrand) adminProductBrand.value = '';
-    if (adminProductCategory) adminProductCategory.value = '';
-    if (adminProductPrice) adminProductPrice.value = '';
-    if (adminProductImage) adminProductImage.value = '';
-    if (adminProductDesc) adminProductDesc.value = '';
-    populateFilterOptions();
-    renderStore();
-    renderAdminStoreList();
-}
-
 async function updateHeroSection() {
     const title = adminHeroTitle?.value.trim() || '';
     const desc = adminHeroDesc?.value.trim() || '';
@@ -1250,7 +859,6 @@ async function updateHeroSection() {
     saveHeroSettings();
 }
 
-if (addProductButton) addProductButton.addEventListener('click', addProduct);
 if (updateHeroButton) updateHeroButton.addEventListener('click', updateHeroSection);
 
 if (authTabs.length) {
@@ -1263,7 +871,6 @@ if (loginButton) loginButton.addEventListener('click', loginUser);
 if (signupButton) signupButton.addEventListener('click', signupUser);
 if (logoutButton) logoutButton.addEventListener('click', logoutUser);
 if (accountBookButton) accountBookButton.addEventListener('click', () => bookRepair({ clearForm: false }));
-if (checkoutButton) checkoutButton.addEventListener('click', checkoutCart);
 if (bookingForm) {
     bookingForm.addEventListener('submit', event => {
         event.preventDefault();
@@ -1282,18 +889,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     await loadCurrentUser();
-    await loadCart();
-    await loadProducts();
     await loadHeroSettings();
     if (heroSettings.title && heroTitle) heroTitle.textContent = heroSettings.title;
     if (heroSettings.description && heroDescription) heroDescription.textContent = heroSettings.description;
     renderAccountState();
     setActiveNavLinks();
     updateSummary('Screen Repair');
-    setupStoreFilters();
-    renderStore();
-    renderCart();
-    renderAdminStoreList();
     if (adminHeroTitle) adminHeroTitle.value = heroTitle?.textContent || heroSettings.title;
     if (adminHeroDesc) adminHeroDesc.value = heroDescription?.textContent || heroSettings.description;
     if (authTabs.length) setActiveAuthPanel('login-panel');
@@ -1301,6 +902,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     attachRepairListHandlers();
     if (page === 'main') {
         await loadMainRepairSummary();
+    }
+    if (page === 'account') {
+        await loadAccountRepairSummary();
     }
     if (page === 'my_repairs') {
         await loadMyRepairs();
