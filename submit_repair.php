@@ -1,5 +1,6 @@
 <?php
 require_once 'connexion.php';
+require_once __DIR__ . '/services/csrf.php';
 $pdo = connexion();
 $currentUser = null;
 if (!empty($_SESSION['user_id'])) {
@@ -13,7 +14,10 @@ $success = '';
 $imagePath = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!$currentUser) {
+    $csrfToken = $_POST['csrf_token'] ?? null;
+    if (!verifyCsrfToken($csrfToken)) {
+        $errors[] = 'The form submission is invalid. Please refresh the page and try again.';
+    } elseif (!$currentUser) {
         $errors[] = 'You must be logged in to submit a repair request.';
     } else {
         $deviceType = trim($_POST['device_type'] ?? '');
@@ -122,6 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <label for="device_image">Device image (optional)</label>
                     <input id="device_image" name="device_image" type="file" accept="image/*" />
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(getCsrfToken(), ENT_QUOTES, 'UTF-8') ?>" />
 
                     <button type="submit" class="button full-width">Submit Repair Request</button>
                 </form>

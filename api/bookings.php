@@ -1,24 +1,9 @@
 <?php
-require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/common.php';
 
 $pdo = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
-
-function getCurrentUser(PDO $pdo)
-{
-    if (empty($_SESSION['user_id'])) {
-        return null;
-    }
-
-    $stmt = $pdo->prepare('SELECT id, role FROM users WHERE id = :id');
-    $stmt->execute(['id' => $_SESSION['user_id']]);
-    return $stmt->fetch();
-}
-
-$user = getCurrentUser($pdo);
-if (!$user) {
-    jsonResponse(['message' => 'Authentication required.'], 401);
-}
+$user = requireAuth();
 
 if ($method === 'GET') {
     if ($user['role'] === 'admin') {
@@ -32,7 +17,8 @@ if ($method === 'GET') {
 }
 
 if ($method === 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true) ?: [];
+    requireCsrfToken(getRequestCsrfToken());
+    $data = getJsonPayload();
     $model = trim($data['model'] ?? '');
     $service = trim($data['service'] ?? '');
     $date = trim($data['date'] ?? '');
@@ -59,11 +45,12 @@ if ($method === 'POST') {
 }
 
 if ($method === 'PATCH') {
+    requireCsrfToken(getRequestCsrfToken());
     if ($user['role'] !== 'admin') {
         jsonResponse(['message' => 'Admin access required.'], 403);
     }
 
-    $params = json_decode(file_get_contents('php://input'), true) ?: [];
+    $params = getJsonPayload();
     $bookingId = $params['id'] ?? null;
     $status = trim($params['status'] ?? '');
 

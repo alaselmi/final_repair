@@ -58,6 +58,9 @@ async function fetchJson(url, options = {}) {
 async function sendApiRequest(endpoint, method = 'GET', data = null) {
     const url = `${apiBase}/${endpoint}`;
     const options = { method, headers: {} };
+    if (csrfToken) {
+        options.headers['X-CSRF-Token'] = csrfToken;
+    }
     if (data) {
         options.headers['Content-Type'] = 'application/json';
         options.body = JSON.stringify(data);
@@ -116,6 +119,7 @@ const mainRepairSummary = document.getElementById('main-repair-summary');
 
 let users = [];
 let currentUser = null;
+let csrfToken = null;
 
 const serviceInfo = {
     'Screen Repair': 'We replace cracked or unresponsive screens with premium glass. Typical turnaround: 1-2 business days.',
@@ -181,8 +185,10 @@ async function loadCurrentUser() {
     try {
         const user = await sendApiRequest('auth.php?action=current');
         currentUser = user || null;
+        csrfToken = currentUser?.csrf_token || null;
     } catch (error) {
         currentUser = null;
+        csrfToken = null;
     }
 }
 
@@ -226,6 +232,7 @@ function saveHeroSettings() {
 
 function setCurrentUser(user) {
     currentUser = user;
+    csrfToken = currentUser?.csrf_token || null;
     saveCurrentUser();
     renderAccountState();
 }
@@ -690,6 +697,7 @@ async function logoutUser() {
     }
 
     currentUser = null;
+    csrfToken = null;
     saveCurrentUser();
     renderAccountState();
 }

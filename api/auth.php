@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/../services/csrf.php';
 
 function ensureAdminUser(PDO $pdo): void
 {
@@ -22,7 +23,7 @@ function ensureAdminUser(PDO $pdo): void
 function getCurrentUser(PDO $pdo)
 {
     if (empty($_SESSION['user_id'])) {
-        jsonResponse(null);
+        return null;
     }
 
     $stmt = $pdo->prepare('SELECT id, name, email, role FROM users WHERE id = :id');
@@ -30,12 +31,13 @@ function getCurrentUser(PDO $pdo)
     $user = $stmt->fetch();
 
     if (!$user) {
-        jsonResponse(null);
+        return null;
     }
 
     $stmt = $pdo->prepare('SELECT id, model, service, date, duration, price, status, notes FROM bookings WHERE user_id = :user_id ORDER BY created_at DESC');
     $stmt->execute(['user_id' => $user['id']]);
     $user['bookings'] = $stmt->fetchAll();
+    $user['csrf_token'] = getCsrfToken();
 
     return $user;
 }
@@ -59,9 +61,12 @@ function login(PDO $pdo): void
     }
 
     $_SESSION['user_id'] = $user['id'];
+    regenerateSession();
+
     $stmt = $pdo->prepare('SELECT id, model, service, date, duration, price, status, notes FROM bookings WHERE user_id = :user_id ORDER BY created_at DESC');
     $stmt->execute(['user_id' => $user['id']]);
     $user['bookings'] = $stmt->fetchAll();
+    $user['csrf_token'] = getCsrfToken();
     jsonResponse($user);
 }
 
@@ -93,12 +98,21 @@ function register(PDO $pdo): void
 
     $userId = $pdo->lastInsertId();
     $_SESSION['user_id'] = $userId;
-    jsonResponse(['id' => $userId, 'name' => $name, 'email' => $email, 'role' => 'customer', 'bookings' => []]);
+    regenerateSession();
+    jsonResponse([
+        'id' => $userId,
+        'name' => $name,
+        'email' => $email,
+        'role' => 'customer',
+        'csrf_token' => getCsrfToken(),
+        'bookings' => [],
+    ]);
 }
 
 function logout(): void
 {
-    unset($_SESSION['user_id']);
+    requireCsrfToken(getRequestCsrfToken());
+    session_unset();
     session_destroy();
     jsonResponse(['message' => 'Logged out successfully.']);
 }

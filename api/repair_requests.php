@@ -70,8 +70,9 @@ if ($method === 'GET') {
 }
 
 if ($method === 'POST') {
+    requireCsrfToken(getRequestCsrfToken());
     $action = $_GET['action'] ?? '';
-    $data = json_decode(file_get_contents('php://input'), true) ?: [];
+    $data = getJsonPayload();
 
     if ($action === 'rate') {
         $repairId = (int) ($data['repair_id'] ?? 0);
@@ -130,8 +131,9 @@ if ($method === 'POST') {
 }
 
 if ($method === 'PATCH') {
+    requireCsrfToken(getRequestCsrfToken());
     requireAdmin();
-    $data = json_decode(file_get_contents('php://input'), true) ?: [];
+    $data = getJsonPayload();
     $repairId = (int) ($data['repair_id'] ?? 0);
     $status = isset($data['status']) ? validateEnum($data['status'], ['Pending', 'In Progress', 'Completed'], 'status') : null;
     $estimatedPrice = isset($data['estimated_price']) ? number_format((float) $data['estimated_price'], 2, '.', '') : null;
