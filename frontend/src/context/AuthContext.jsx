@@ -1,93 +1,67 @@
-import { createContext, useCallback, useEffect, useState } from 'react';
-import useToast from '../hooks/useToast';
-import {
-  getCurrentUser,
-  login as loginRequest,
-  logout as logoutRequest,
-  registerUnauthorizedHandler,
-  clearUnauthorizedHandler,
-} from '../api';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login as loginApi, setLogoutHandler } from '../services/api';
 
 const AuthContext = createContext(null);
 
+const AUTH_STORAGE_KEY = 'repair_saas_token';
+
 export function AuthProvider({ children }) {
+  const [token, setToken] = useState(() => localStorage.getItem(AUTH_STORAGE_KEY) || '');
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { addToast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSessionExpired = useCallback(() => {
-    setUser(null);
-    addToast('Session expired', 'error');
-    window.location.href = '/';
-  }, [addToast]);
-
-  useEffect(() => {
-    registerUnauthorizedHandler(handleSessionExpired);
-    return () => {
-      clearUnauthorizedHandler();
-    };
-  }, [handleSessionExpired]);
-
-  const fetchUser = useCallback(async () => {
-    try {
-      const response = await getCurrentUser();
-      setUser(response.data?.user ?? null);
-    } catch (fetchError) {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const logout = useCallback(() => {
+    setToken('');
+    navigate('/login');
+  }, [navigate]);
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    setLogoutHandler(logout);
+  }, [logout]);
 
-  const login = async (email, password) => {
+  useEffect(() => {
+    if (!token) {
+      setUser(null);
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      return;
+    }
+
+    localStorage.setItem(AUTH_STORAGE_KEY, token);
+    try {
+      const [, payload] = token.split('.');
+      const value = payload ? JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/'))) : null;
+      setUser(value || null);
+    } catch {
+      setUser(null);
+    }
+  }, [token]);
+
+  async function login(credentials) {
     setLoading(true);
+    setError('');
 
     try {
-      const response = await loginRequest(email, password);
-      setUser(response.data?.user ?? null);
-      return response;
-    } catch (fetchError) {
-      addToast(fetchError.message, 'error');
-      setUser(null);
-      throw fetchError;
+      const data = await loginApi(credentials);
+      setToken(data.token);
+      navigate('/');
+      return data;
+    } catch (err) {
+      setError(err.message || 'Login failed');
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const logout = async () => {
-    setLoading(true);
-
-    try {
-      await logoutRequest();
-      setUser(null);
-      addToast('Logged out successfully', 'success');
-    } catch (fetchError) {
-      addToast(fetchError.message, 'error');
-      setUser(null);
-      throw fetchError;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        login,
-        logout,
-        isAuthenticated: Boolean(user),
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({ token, user, loading, error, login, logout, isAuthenticated: Boolean(token) }),
+    [token, user, loading, error, login, logout]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export default AuthContext;

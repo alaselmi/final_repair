@@ -12,7 +12,10 @@ class Response
 
     public static function json(array $data, int $status = 200): void
     {
-        header('Content-Type: application/json; charset=utf-8');
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+        }
+
         http_response_code($status);
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         exit;
@@ -21,7 +24,7 @@ class Response
     public static function error(string $message, int $code = 400): void
     {
         http_response_code($code);
-        echo $message;
+        echo '<h1>' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</h1>';
         exit;
     }
 }

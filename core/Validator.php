@@ -36,6 +36,58 @@ class Validator
         return true;
     }
 
+    public function string(string $field): bool
+    {
+        if (!isset($this->data[$field]) || !is_string($this->data[$field])) {
+            $this->errors[$field] = ucfirst($field) . ' must be a string.';
+            return false;
+        }
+
+        return true;
+    }
+
+    public function numeric(string $field): bool
+    {
+        if (!isset($this->data[$field]) || !is_numeric($this->data[$field])) {
+            $this->errors[$field] = ucfirst($field) . ' must be a number.';
+            return false;
+        }
+
+        return true;
+    }
+
+    public function min(string $field, int $limit): bool
+    {
+        $value = $this->data[$field] ?? null;
+        if ($value === null || mb_strlen((string) $value) < $limit) {
+            $this->errors[$field] = ucfirst($field) . " must be at least {$limit} characters.";
+            return false;
+        }
+
+        return true;
+    }
+
+    public function max(string $field, int $limit): bool
+    {
+        $value = $this->data[$field] ?? null;
+        if ($value !== null && mb_strlen((string) $value) > $limit) {
+            $this->errors[$field] = ucfirst($field) . " may not exceed {$limit} characters.";
+            return false;
+        }
+
+        return true;
+    }
+
+    public function in(string $field, array $values): bool
+    {
+        if (!isset($this->data[$field]) || !in_array($this->data[$field], $values, true)) {
+            $this->errors[$field] = ucfirst($field) . ' has an invalid value.';
+            return false;
+        }
+
+        return true;
+    }
+
     public function sanitize(string $field): string
     {
         return htmlspecialchars(trim((string) ($this->data[$field] ?? '')), ENT_QUOTES, 'UTF-8');

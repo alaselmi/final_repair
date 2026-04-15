@@ -5,6 +5,8 @@ namespace Core;
 use PDO;
 use PDOException;
 
+require_once __DIR__ . '/Env.php';
+
 class Database
 {
     private static ?PDO $instance = null;
@@ -13,7 +15,13 @@ class Database
     {
         if (self::$instance === null) {
             $config = require __DIR__ . '/../config/database.php';
-            $dsn = sprintf('mysql:host=%s;dbname=%s;charset=%s', $config['host'], $config['name'], $config['charset']);
+            $dsn = sprintf(
+                'mysql:host=%s;port=%s;dbname=%s;charset=%s',
+                $config['host'],
+                $config['port'] ?? 3306,
+                $config['name'],
+                $config['charset']
+            );
 
             try {
                 self::$instance = new PDO($dsn, $config['user'], $config['pass'], [

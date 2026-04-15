@@ -10,8 +10,11 @@ class ApiResponse
             'success' => true,
             'message' => $message,
             'data' => $data,
-            'meta' => $meta,
         ];
+
+        if (!empty($meta)) {
+            $payload['meta'] = $meta;
+        }
 
         self::json($payload, $code);
     }
@@ -21,12 +24,15 @@ class ApiResponse
         $payload = [
             'success' => false,
             'message' => $message,
-            'data' => [],
-            'meta' => $meta,
+            'data' => null,
         ];
 
         if (!empty($errors)) {
             $payload['errors'] = $errors;
+        }
+
+        if (!empty($meta)) {
+            $payload['meta'] = $meta;
         }
 
         self::json($payload, $code);

@@ -2,18 +2,18 @@
 
 namespace App\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Services\AuthService;
 use Core\Controller;
 use Core\Response;
-use Core\Validator;
 
 class AuthController extends Controller
 {
     private AuthService $authService;
 
-    public function __construct()
+    public function __construct(AuthService $authService)
     {
-        $this->authService = new AuthService();
+        $this->authService = $authService;
     }
 
     public function showLogin(): void
@@ -29,16 +29,15 @@ class AuthController extends Controller
         );
     }
 
-    public function login(): void
+    public function login(LoginRequest $request): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             Response::redirect('/auth/login');
         }
 
-        $validator = new Validator($_POST);
-        $csrfToken = $_POST['csrf_token'] ?? null;
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $email = trim((string) $request->get('email'));
+        $password = (string) $request->get('password');
+        $csrfToken = $request->get('csrf_token');
 
         if (!verifyCsrfToken($csrfToken)) {
             $this->view(
@@ -53,27 +52,16 @@ class AuthController extends Controller
             return;
         }
 
-        if (!$validator->required(['email', 'password']) || !$validator->email('email')) {
-            $this->view(
-                'auth/login',
-                [
-                    'error' => $validator->getFirstError(),
-                    'email' => $validator->sanitize('email'),
-                ],
-                'layouts/main'
-            );
-            return;
-        }
-
         if ($this->authService->login($email, $password)) {
             Response::redirect('/admin/dashboard');
+            return;
         }
 
         $this->view(
             'auth/login',
             [
                 'error' => 'Invalid credentials. Please try again.',
-                'email' => $validator->sanitize('email'),
+                'email' => htmlspecialchars($email, ENT_QUOTES, 'UTF-8'),
                 'csrf_token' => getCsrfToken(),
             ],
             'layouts/main'

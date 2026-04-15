@@ -11,10 +11,10 @@ class AdminController extends Controller
     private UserModel $userModel;
     private RepairModel $repairModel;
 
-    public function __construct()
+    public function __construct(UserModel $userModel, RepairModel $repairModel)
     {
-        $this->userModel = new UserModel();
-        $this->repairModel = new RepairModel();
+        $this->userModel = $userModel;
+        $this->repairModel = $repairModel;
     }
 
     public function dashboard(): void

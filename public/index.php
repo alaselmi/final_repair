@@ -1,54 +1,66 @@
 <?php
 
-require_once __DIR__ . '/../core/Database.php';
-require_once __DIR__ . '/../core/Router.php';
-require_once __DIR__ . '/../core/App.php';
-require_once __DIR__ . '/../core/Controller.php';
-require_once __DIR__ . '/../core/Response.php';
-require_once __DIR__ . '/../core/Validator.php';
-require_once __DIR__ . '/../app/Controllers/AuthController.php';
-require_once __DIR__ . '/../app/Controllers/AdminController.php';
-require_once __DIR__ . '/../app/Services/AuthService.php';
-require_once __DIR__ . '/../app/Middleware/AuthMiddleware.php';
-require_once __DIR__ . '/../app/Middleware/RoleMiddleware.php';
+require_once __DIR__ . '/../core/autoload.php';
+require_once __DIR__ . '/../core/Env.php';
+require_once __DIR__ . '/../core/Config.php';
+require_once __DIR__ . '/../core/Container.php';
+require_once __DIR__ . '/../core/Logger.php';
+require_once __DIR__ . '/../core/ErrorHandler.php';
+require_once __DIR__ . '/../core/RouteCache.php';
+require_once __DIR__ . '/../core/ServiceProvider.php';
 require_once __DIR__ . '/../services/session.php';
 require_once __DIR__ . '/../services/csrf.php';
+require_once __DIR__ . '/../app/Providers/AppServiceProvider.php';
 
-use App\Controllers\AdminController;
-use App\Controllers\AuthController;
-use App\Middleware\AuthMiddleware;
-use App\Middleware\RoleMiddleware;
+use App\Middleware\CorsMiddleware;
+use App\Middleware\RateLimitMiddleware;
 use Core\App;
+use Core\Config;
+use Core\Container;
+use Core\Env;
+use Core\ErrorHandler;
+use Core\RouteCache;
+use App\Providers\AppServiceProvider;
 
-function instantiateMiddleware(array $middlewareSpec): array
-{
-    $middleware = [];
-    foreach ($middlewareSpec as $item) {
-        if (is_string($item)) {
-            $middleware[] = new $item();
-            continue;
-        }
+Env::load(__DIR__ . '/../.env');
 
-        if (is_array($item) && is_string($item[0])) {
-            $middleware[] = new $item[0](...($item[1] ?? []));
-        }
+Config::load([
+    'app' => require __DIR__ . '/../config/app.php',
+    'database' => require __DIR__ . '/../config/database.php',
+    'jwt' => require __DIR__ . '/../config/jwt.php',
+]);
+
+$container = new Container();
+Container::setInstance($container);
+$container->registerProvider(new AppServiceProvider($container));
+
+ErrorHandler::register();
+
+$appEnv = config('app.env', 'development');
+
+$routes = RouteCache::load(
+    __DIR__ . '/../routes.php',
+    __DIR__ . '/../cache/routes.php',
+    $appEnv === 'production'
+);
+
+$app = new App($container);
+$app->router->setGlobalMiddleware([
+    CorsMiddleware::class,
+    RateLimitMiddleware::class,
+]);
+
+foreach ($routes as $routeGroup) {
+    foreach ($routeGroup as $route) {
+        $app->router->add(
+            $route['method'],
+            $route['path'],
+            $route['handler'],
+            $route['middleware'] ?? [],
+            $route['pattern'] ?? null,
+            $route['paramNames'] ?? null
+        );
     }
-
-    return $middleware;
-}
-
-$routes = require __DIR__ . '/../routes.php';
-
-$app = new App();
-foreach ($routes['web'] as $route) {
-    $middleware = isset($route['middleware']) ? instantiateMiddleware($route['middleware']) : [];
-
-    $app->router->add(
-        $route['method'],
-        $route['path'],
-        $route['handler'],
-        $middleware
-    );
 }
 
 $app->run();

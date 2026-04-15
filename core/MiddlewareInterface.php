@@ -4,5 +4,5 @@ namespace Core;
 
 interface MiddlewareInterface
 {
-    public function handle(): bool;
+    public function handle(Request $request, callable $next): bool;
 }

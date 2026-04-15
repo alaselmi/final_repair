@@ -5,10 +5,12 @@ namespace Core;
 class App
 {
     public Router $router;
+    private Container $container;
 
-    public function __construct()
+    public function __construct(?Container $container = null)
     {
-        $this->router = new Router();
+        $this->container = $container ?? Container::getInstance();
+        $this->router = new Router($this->container);
     }
 
     public function run(): void
