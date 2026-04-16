@@ -1,11 +1,15 @@
+import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-
-const navItems = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/repairs', label: 'Repairs' }
-];
+import AuthContext from '../../context/AuthContext';
 
 function Sidebar() {
+  const auth = useContext(AuthContext);
+  const navItems = [
+    { to: '/', label: 'Dashboard' },
+    { to: '/repairs', label: 'Repairs' },
+    ...(auth.user?.role === 'admin' ? [{ to: '/users', label: 'Users' }] : []),
+  ];
+
   return (
     <aside className="flex h-full w-full max-w-xs flex-col gap-8 rounded-[2rem] border border-slate-200/80 bg-white/95 p-6 shadow-soft backdrop-blur-xl dark:border-slate-700/80 dark:bg-slate-950/90 lg:w-72">
       <div className="space-y-3">

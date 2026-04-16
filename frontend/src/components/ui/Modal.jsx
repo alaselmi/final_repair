@@ -5,8 +5,8 @@ function Modal({ title, isOpen, onClose, children, footer }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/60 px-4 py-6 sm:items-center">
-      <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
-      <div className="relative w-full max-w-3xl overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-1 ring-slate-900/10 dark:bg-slate-950">
+      <div className="absolute inset-0 animate-modal-backdrop" onClick={onClose} aria-hidden="true" />
+      <div className="relative w-full max-w-3xl overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-1 ring-slate-900/10 dark:bg-slate-950 animate-modal-enter transition-all duration-300">
         <div className="flex items-center justify-between border-b border-slate-200/80 px-6 py-5 dark:border-slate-800">
           <div>
             <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</p>

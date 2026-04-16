@@ -1,11 +1,13 @@
 import { get, post } from './api';
 
 export async function fetchRepairs() {
-  return get('/repairs');
+  const response = await get('/repairs');
+  return response?.repairs ?? [];
 }
 
 export async function createRepair(payload) {
-  return post('/repairs', payload);
+  const response = await post('/repairs', payload);
+  return response?.repair ?? response;
 }
 
 export async function fetchRepairStats() {

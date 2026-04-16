@@ -33,13 +33,21 @@ async function request(path, options = {}) {
   }
 
   const contentType = response.headers.get('content-type');
-  const data = contentType?.includes('application/json') ? await response.json() : null;
+  const payload = contentType?.includes('application/json') ? await response.json() : null;
 
   if (!response.ok) {
-    throw new Error(data?.message || data?.error || 'An unexpected error occurred.');
+    throw new Error(payload?.message || payload?.error || 'An unexpected error occurred.');
   }
 
-  return data;
+  if (payload && typeof payload === 'object' && 'success' in payload && 'data' in payload) {
+    const responseData = payload.data;
+    if (payload.meta && typeof responseData === 'object' && responseData !== null) {
+      return { ...responseData, meta: payload.meta };
+    }
+    return responseData;
+  }
+
+  return payload;
 }
 
 export function login(payload) {

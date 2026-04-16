@@ -60,6 +60,24 @@ return [
         ],
         [
             'method' => 'GET',
+            'path' => '/api/users',
+            'handler' => [App\Controllers\Api\UserController::class, 'index'],
+            'middleware' => [
+                App\Middleware\ApiAuthMiddleware::class,
+                App\Middleware\ApiRoleMiddleware::class . ':admin',
+            ],
+        ],
+        [
+            'method' => 'GET',
+            'path' => '/api/v1/users',
+            'handler' => [App\Controllers\Api\UserController::class, 'index'],
+            'middleware' => [
+                App\Middleware\ApiAuthMiddleware::class,
+                App\Middleware\ApiRoleMiddleware::class . ':admin',
+            ],
+        ],
+        [
+            'method' => 'GET',
             'path' => '/api/repairs',
             'handler' => [App\Controllers\Api\RepairController::class, 'index'],
             'middleware' => [App\Middleware\ApiAuthMiddleware::class],
