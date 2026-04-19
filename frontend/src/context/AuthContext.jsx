@@ -1,67 +1,96 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login as loginApi, setLogoutHandler } from '../services/api';
+import { request } from '../shared/services/api';
 
 const AuthContext = createContext(null);
 
-const AUTH_STORAGE_KEY = 'repair_saas_token';
-
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem(AUTH_STORAGE_KEY) || '');
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const logout = useCallback(() => {
-    setToken('');
-    navigate('/login');
+  // Fetch user on app load to validate session
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        setLoading(true);
+        const response = await request('/auth/me');
+        setUser(response.user);
+      } catch (err) {
+        setUser(null);
+        setError('');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkAuth();
+
+    // Listen for logout events from API
+    const handleLogout = () => {
+      setUser(null);
+      navigate('/login');
+    };
+
+    window.addEventListener('auth:logout', handleLogout);
+    return () => window.removeEventListener('auth:logout', handleLogout);
   }, [navigate]);
 
-  useEffect(() => {
-    setLogoutHandler(logout);
-  }, [logout]);
-
-  useEffect(() => {
-    if (!token) {
-      setUser(null);
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-      return;
-    }
-
-    localStorage.setItem(AUTH_STORAGE_KEY, token);
+  const login = useCallback(async (email, password) => {
     try {
-      const [, payload] = token.split('.');
-      const value = payload ? JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/'))) : null;
-      setUser(value || null);
-    } catch {
-      setUser(null);
-    }
-  }, [token]);
-
-  async function login(credentials) {
-    setLoading(true);
-    setError('');
-
-    try {
-      const data = await loginApi(credentials);
-      setToken(data.token);
-      navigate('/');
-      return data;
+      setError('');
+      setLoading(true);
+      const response = await request('/auth/login', {
+        method: 'POST',
+        body: { email, password },
+      });
+      setUser(response.user);
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Login failed');
+      setError(err.message);
       throw err;
     } finally {
       setLoading(false);
     }
-  }
+  }, [navigate]);
+
+  const logout = useCallback(async () => {
+    try {
+      await request('/auth/logout');
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      setUser(null);
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const value = useMemo(
-    () => ({ token, user, loading, error, login, logout, isAuthenticated: Boolean(token) }),
-    [token, user, loading, error, login, logout]
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      loading,
+      error,
+      login,
+      logout,
+    }),
+    [user, loading, error, login, logout]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used inside AuthProvider');
+  }
+  return context;
 }
 
 export default AuthContext;

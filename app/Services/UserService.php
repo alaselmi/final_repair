@@ -17,4 +17,14 @@ class UserService
     {
         return $this->userModel->getAllUsers();
     }
+
+    public function getPaginatedUsers(int $offset, int $limit): array
+    {
+        return $this->userModel->getUsersPaginated($offset, $limit);
+    }
+
+    public function getTotalUsers(): int
+    {
+        return $this->userModel->getTotalUsersCount();
+    }
 }

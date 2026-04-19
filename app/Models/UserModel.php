@@ -20,6 +20,21 @@ class UserModel
         return $stmt->fetchAll();
     }
 
+    public function getUsersPaginated(int $offset, int $limit): array
+    {
+        $stmt = $this->db->prepare('SELECT id, name, email, role, created_at FROM users ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function getTotalUsersCount(): int
+    {
+        $stmt = $this->db->query('SELECT COUNT(*) AS total FROM users');
+        return (int) $stmt->fetchColumn();
+    }
+
     public function countUsers(): int
     {
         $stmt = $this->db->query('SELECT COUNT(*) AS total FROM users');

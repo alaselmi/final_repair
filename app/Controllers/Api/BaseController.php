@@ -49,6 +49,17 @@ class BaseController
         return $this->authService->can($permission);
     }
 
+    public function getCsrfToken(): void
+    {
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+
+        $this->success([
+            'token' => $_SESSION['csrf_token']
+        ]);
+    }
+
     protected function validate(array $data, array $rules): Validator
     {
         $validator = new Validator($data);

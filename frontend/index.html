@@ -4,7 +4,17 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="" />
     <title>frontend</title>
+    <script>
+      // Fetch CSRF token on page load
+      fetch('/api/v1/csrf-token')
+        .then(r => r.json())
+        .then(data => {
+          document.querySelector('meta[name="csrf-token"]').content = data.token;
+        })
+        .catch(err => console.error('Failed to fetch CSRF token:', err));
+    </script>
   </head>
   <body>
     <div id="root"></div>

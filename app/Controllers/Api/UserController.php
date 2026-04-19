@@ -19,7 +19,19 @@ class UserController extends BaseController
     {
         $this->authorize(['admin']);
 
-        $users = $this->userService->listUsers();
-        $this->success(['users' => $users], 'Users retrieved successfully.');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(100, max(1, (int) ($_GET['limit'] ?? 50)));
+        $offset = ($page - 1) * $limit;
+
+        $users = $this->userService->getPaginatedUsers($offset, $limit);
+        $total = $this->userService->getTotalUsers();
+
+        $this->success([
+            'users' => $users,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit,
+            'totalPages' => (int) ceil($total / $limit)
+        ], 'Users retrieved successfully.');
     }
 }

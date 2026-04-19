@@ -13,9 +13,16 @@ class AuthController extends BaseController
             $this->error('Invalid credentials.', 401);
         }
 
+        // Set httpOnly cookie for JWT
+        setcookie('auth_token', $token, [
+            'expires' => time() + 900, // 15 minutes
+            'path' => '/',
+            'secure' => true, // HTTPS only
+            'httponly' => true, // Inaccessible to JavaScript
+            'samesite' => 'Strict', // CSRF protection
+        ]);
+
         $this->success([
-            'token' => $token,
-            'type' => 'Bearer',
             'user' => $this->authService->getUser(),
         ], 'Login successful.');
     }
@@ -24,6 +31,16 @@ class AuthController extends BaseController
     {
         $this->authorize();
         $this->authService->logout();
+        
+        // Clear the auth cookie
+        setcookie('auth_token', '', [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        
         $this->success(['message' => 'Logged out successfully.']);
     }
 

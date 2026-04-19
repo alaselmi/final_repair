@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import RepairsPage from './pages/RepairsPage';
-import UsersPage from './pages/UsersPage';
+import { LoginPage } from './features/auth';
+import { DashboardPage } from './features/dashboard';
+import { RepairsPage } from './features/repairs';
+import { UsersPage } from './features/users';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 

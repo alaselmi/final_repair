@@ -151,6 +151,12 @@ class AuthService
 
     private function resolveBearerToken(): ?string
     {
+        // First check httpOnly cookie
+        if (!empty($_COOKIE['auth_token'])) {
+            return $_COOKIE['auth_token'];
+        }
+
+        // Fallback to Authorization header
         $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['Authorization'] ?? null;
         if ($header === null) {
             return null;

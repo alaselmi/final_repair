@@ -1,4 +1,4 @@
-function Card({ title, description, children, className = '' }) {
+function Card({ title, description, children, footer, className = '' }) {
   return (
     <div className={`group relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/95 p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-slate-700/80 dark:bg-slate-950/95 ${className}`}>
       {(title || description) && (
@@ -11,6 +11,7 @@ function Card({ title, description, children, className = '' }) {
         </div>
       )}
       {children}
+      {footer && <div className="mt-6 border-t border-slate-200/80 pt-4 dark:border-slate-700/80">{footer}</div>}
     </div>
   );
 }
